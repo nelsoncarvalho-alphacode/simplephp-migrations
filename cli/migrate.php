@@ -2,6 +2,7 @@
 
 $projectRoot = realpath(__DIR__ . '/..');
 require_once $projectRoot . '/vendor/autoload.php';
+require_once $projectRoot . '/config/environments.php';
 require_once $projectRoot . '/config/db.php';
 
 $env = getenv('CLI_ENV') ?: 'dev';
