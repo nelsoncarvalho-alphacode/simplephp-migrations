@@ -2,6 +2,7 @@
 
 $projectRoot = realpath(__DIR__ . '/..');
 require_once $projectRoot . '/vendor/autoload.php';
+require_once $projectRoot . '/config/db.php';
 
 $env = getenv('CLI_ENV') ?: 'dev';
 $_SERVER['HTTP_HOST'] = $env;
@@ -20,7 +21,7 @@ $pdo = new PDO(
 
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$migrationsFolder = __DIR__ . '/../migrations';
+$migrationsFolder = $projectRoot . '/migrations';
 
 // 🧱 Cria tabela de controle se necessário
 $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (

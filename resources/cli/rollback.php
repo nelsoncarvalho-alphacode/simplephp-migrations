@@ -2,6 +2,7 @@
 
 $projectRoot = realpath(__DIR__ . '/..');
 require_once $projectRoot . '/vendor/autoload.php';
+require_once $projectRoot . '/config/db.php';
 
 $env = getenv('CLI_ENV') ?: 'dev';
 $_SERVER['HTTP_HOST'] = $env;
@@ -31,7 +32,7 @@ try {
 }
 
 // Local da pasta de migrations
-$migrationsFolder = __DIR__ . '/../migrations';
+$migrationsFolder = $projectRoot . '/migrations';
 
 // Busca a última migration executada (excluindo _startup.php)
 $ultimaMigration = $pdo->query("

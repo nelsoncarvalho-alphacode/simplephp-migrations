@@ -9,8 +9,8 @@ class SimplePHPCommand
     public function handle(array $argv): void
     {
         $command = $argv[1] ?? null;
-        $projectPath = getcwd();
-        $cliPath = __DIR__ . '/../cli';
+        $projectPath = getcwd() . '/back-office';
+        $cliPath = $projectPath . '/cli';
 
         if (!$command) {
             $this->printHelp();
@@ -30,9 +30,10 @@ class SimplePHPCommand
 
             if (isset($scripts[$action])) {
                 if (!file_exists($scripts[$action])) {
-                    echo "❌ Script $scripts[$action] não encontrado.\n";
+                    echo "❌ Script {$scripts[$action]} não encontrado.\n";
                     return;
                 }
+
                 passthru("php " . escapeshellarg($scripts[$action]));
                 return;
             }
@@ -40,10 +41,8 @@ class SimplePHPCommand
 
         // Validação
         if ($command === 'validate') {
-            if ($command === 'validate') {
-                Validator::validate(getcwd());
-                return;
-            }
+            Validator::validate($projectPath);
+            return;
         }
 
         // Inicialização do projeto
@@ -65,6 +64,7 @@ class SimplePHPCommand
 
         $this->printHelp("❌ Comando inválido: $command");
     }
+
 
     private function initProject(string $path): void
     {
