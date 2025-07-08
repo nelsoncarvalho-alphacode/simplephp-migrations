@@ -1,6 +1,6 @@
 <?php
 
-class _2025_07_08_000000_init_project_structure
+class _0000_00_00_000000_init_project_structure
 {
     public function up()
     {
