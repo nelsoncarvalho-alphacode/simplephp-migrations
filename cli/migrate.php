@@ -27,7 +27,7 @@ require_once $projectRoot . '/config/db.php';
 
 if (DB_HOST === 'localhost') {
     // 🛠️ Ajusta o host para localhost se necessário
-    DB_HOST = '127.0.0.1';
+    define('DB_HOST', '127.0.0.1');
 }
 
 // ✅ Conexão PDO usando as constantes do db.php
