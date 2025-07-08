@@ -2,23 +2,28 @@
 
 $projectRoot = realpath(__DIR__ . '/..');
 require_once $projectRoot . '/vendor/autoload.php';
+
+// 📥 Carrega os hosts definidos
 require_once $projectRoot . '/config/environments.php';
-require_once $projectRoot . '/config/db.php';
 
+// 🌐 Detecta o ambiente via CLI_ENV e mapeia para um host
 $env = getenv('CLI_ENV') ?: 'dev';
-$_SERVER['HTTP_HOST'] = $env;
 
-define('DEVELOPMENT_URL', 'dev');
-define('MAC_URL', 'mac');
-define('TEST_URL', 'hml');
-$PRODUCTION_URLS = ['prod'];
+$hostMap = [
+    'dev' => defined('DEVELOPMENT_URL') ? DEVELOPMENT_URL : null,
+    'mac' => defined('MAC_URL') ? MAC_URL : null,
+    'hml' => defined('TEST_URL') ? TEST_URL : null,
+    'prod' => $PRODUCTION_URLS[0] ?? null
+];
 
-// Inclui o db.php
-require_once __DIR__ . '/../db.php'; // ajuste se estiver em outro caminho
-
-if (!defined('DB_HOST')) {
-    die("❌ Ambiente \"$env\" não configurado corretamente no db.php.\n");
+if (!isset($hostMap[$env]) || !$hostMap[$env]) {
+    die("❌ Ambiente '$env' não configurado corretamente em environments.php.\n");
 }
+
+// 🧪 Simula o HTTP_HOST para que db.php funcione
+$_SERVER['HTTP_HOST'] = $hostMap[$env];
+
+require_once $projectRoot . '/config/db.php';
 
 // Conecta ao banco com PDO
 try {
