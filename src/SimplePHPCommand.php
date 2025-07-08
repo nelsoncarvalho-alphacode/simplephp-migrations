@@ -93,7 +93,7 @@ PHP;
         echo "✅ Migration criada com sucesso: migrations/$filename\n";
     }
 
-    private function printHelp(string $error = null): void
+    private function printHelp(?string $error = null): void
     {
         if ($error) {
             echo "$error\n\n";
