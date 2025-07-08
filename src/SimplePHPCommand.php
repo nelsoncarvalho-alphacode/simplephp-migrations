@@ -14,6 +14,12 @@ class SimplePHPCommand
             return;
         }
 
+        if ($command === 'init') {
+            $this->initProject(getcwd());
+            return;
+        }
+
+
         // Comando: make:migration NomeDaMigration
         if ($command === 'make:migration') {
             $name = $argv[2] ?? null;
@@ -91,6 +97,38 @@ PHP;
         file_put_contents($filePath, $template);
 
         echo "✅ Migration criada com sucesso: migrations/$filename\n";
+    }
+
+    private function initProject(string $path): void
+    {
+        $stubPath = __DIR__ . '/../stubs';
+
+        // Criar as pastas
+        $folders = ['cli', 'migrations'];
+        foreach ($folders as $folder) {
+            $target = "$path/$folder";
+            if (!is_dir($target)) {
+                mkdir($target, 0777, true);
+                echo "📁 Pasta criada: $folder\n";
+            }
+        }
+
+        // Copiar arquivos da CLI
+        $cliFiles = ['migrate.php', 'rollback.php', 'validate.php'];
+        foreach ($cliFiles as $file) {
+            $src = "$stubPath/cli/$file";
+            $dest = "$path/cli/$file";
+            if (!file_exists($dest)) {
+                copy($src, $dest);
+                echo "📄 Arquivo copiado: cli/$file\n";
+            }
+        }
+
+        echo "\n✅ Projeto iniciado com sucesso!\n";
+        echo "Agora você pode usar:\n";
+        echo "  simplephp make:migration criar_tabela_x\n";
+        echo "  simplephp migrate:dev\n";
+        echo "  simplephp rollback:dev\n";
     }
 
     private function printHelp(?string $error = null): void
