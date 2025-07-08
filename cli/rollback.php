@@ -25,15 +25,12 @@ $_SERVER['HTTP_HOST'] = $hostMap[$env];
 
 require_once $projectRoot . '/config/db.php';
 
-if (DB_HOST === 'localhost') {
-    // 🛠️ Ajusta o host para localhost se necessário
-    define('DB_HOST', '127.0.0.1');
-}
+$pdoHost = (DB_HOST === 'localhost') ? '127.0.0.1' : DB_HOST;
 
 // Conecta ao banco com PDO
 try {
     $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8",
+        "mysql:host=" . $pdoHost . ";dbname=" . DB_NAME . ";charset=utf8",
         DB_USER,
         DB_PASS
     );
