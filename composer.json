@@ -1,0 +1,16 @@
+{
+  "name": "alphacode/simplephp-migrations",
+  "description": "CLI para gerenciar migrations em projetos SimplePHP",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Alphacode\\Migrations\\": "src/"
+    }
+  },
+  "bin": [
+    "bin/simplephp"
+  ],
+  "require": {
+    "php": "^7.4 || ^8.0"
+  }
+}
