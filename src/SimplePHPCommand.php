@@ -70,6 +70,21 @@ class SimplePHPCommand
     {
         echo "📦 Iniciando projeto SimplePHP...\n";
 
+        $composerJson = "$path/composer.json";
+        $vendorAutoload = "$path/vendor/autoload.php";
+
+        if (!file_exists($composerJson)) {
+            echo "📝 Criando composer.json básico...\n";
+            chdir($path);
+            shell_exec("composer init -n");
+        }
+
+        if (!file_exists($vendorAutoload)) {
+            echo "📥 Instalando dependências...\n";
+            chdir($path);
+            shell_exec("composer install");
+        }
+
         $migrationDir = "$path/migrations";
         if (!is_dir($migrationDir)) {
             mkdir($migrationDir, 0777, true);
