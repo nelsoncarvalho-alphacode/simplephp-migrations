@@ -1,7 +1,25 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+// Autoload seguro (funciona global e local)
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php', // uso local
+    __DIR__ . '/../../../autoload.php',  // uso global
+];
+
+$found = false;
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require $path;
+        $found = true;
+        break;
+    }
+}
+
+if (!$found) {
+    fwrite(STDERR, "❌ Autoload não encontrado.\n");
+    exit(1);
+}
 
 use Alphacode\Migrations\SimplePHPCommand;
 
