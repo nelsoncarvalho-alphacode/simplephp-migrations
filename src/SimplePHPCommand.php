@@ -9,7 +9,7 @@ class SimplePHPCommand
     public function handle(array $argv): void
     {
         $command = $argv[1] ?? null;
-        $projectPath = getcwd() . '/back-office';
+        $projectPath = getcwd();
         $cliPath = $projectPath . '/cli';
 
         if (!$command) {
