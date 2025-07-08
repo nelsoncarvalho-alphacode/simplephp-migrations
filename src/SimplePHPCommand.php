@@ -73,18 +73,30 @@ class SimplePHPCommand
         $composerJson = "$path/composer.json";
         $vendorAutoload = "$path/vendor/autoload.php";
 
+        chdir($path);
+
+        // 1. Se não existe composer.json, cria
         if (!file_exists($composerJson)) {
-            echo "📝 Criando composer.json básico...\n";
-            chdir($path);
-            shell_exec("composer init -n");
+            echo "📝 Criando composer.json...\n";
+            shell_exec("composer init -n --name=project/simplephp --require=php:^7.4 --autoload psr-4 --type=project");
         }
 
+        // 2. Se não existe vendor/autoload.php, roda install
         if (!file_exists($vendorAutoload)) {
             echo "📥 Instalando dependências...\n";
-            chdir($path);
             shell_exec("composer install");
         }
 
+        // 3. Se ainda não tem o pacote, adiciona
+        $composer = json_decode(file_get_contents($composerJson), true);
+        $requires = $composer['require'] ?? [];
+
+        if (!array_key_exists('alphacode/simplephp-migrations', $requires)) {
+            echo "➕ Adicionando alphacode/simplephp-migrations...\n";
+            shell_exec("composer require alphacode/simplephp-migrations");
+        }
+
+        // Criação de migrations/
         $migrationDir = "$path/migrations";
         if (!is_dir($migrationDir)) {
             mkdir($migrationDir, 0777, true);
@@ -96,7 +108,7 @@ class SimplePHPCommand
         $target = "$migrationDir/_0000_00_00_000000_init_project_structure.php";
         if (!file_exists($target)) {
             copy($stub, $target);
-            echo "📄 Migration inicial criada: _0000_00_00_000000_init_project_structure.php\n";
+            echo "📄 Migration inicial criada.\n";
         }
 
         echo "\n✅ Projeto pronto! Agora use:\n";
