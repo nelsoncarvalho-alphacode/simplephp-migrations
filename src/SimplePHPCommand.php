@@ -124,11 +124,27 @@ PHP;
             }
         }
 
+        // Copiar migration inicial
+        $initMigrationStub = $stubPath . '/../migrations/_0000_00_00_000000_init_project_structure.php';
+        $targetMigration = "$path/migrations/_0000_00_00_000000_init_project_structure.php";
+
+        if (file_exists($initMigrationStub) && !file_exists($targetMigration)) {
+            copy($initMigrationStub, $targetMigration);
+            echo "📄 Migration inicial copiada: migrations/_0000_00_00_000000_init_project_structure.php\n";
+        }
+
+
         echo "\n✅ Projeto iniciado com sucesso!\n";
         echo "Agora você pode usar:\n";
-        echo "  simplephp make:migration criar_tabela_x\n";
-        echo "  simplephp migrate:dev\n";
-        echo "  simplephp rollback:dev\n";
+        echo "  simplephp make:migration nome_da_migration  - Cria uma nova migration\n";
+        echo "  simplephp migrate:dev                       - Executa migrations no ambiente DEV\n";
+        echo "  simplephp migrate:mac                       - Executa migrations no MAC\n";
+        echo "  simplephp migrate:hml                       - Executa migrations na HOMOLOGAÇÃO\n";
+        echo "  simplephp migrate:prod                      - Executa migrations na PRODUÇÃO\n";
+        echo "  simplephp rollback:dev                      - Rollback no ambiente DEV\n";
+        echo "  simplephp rollback:prod                     - Rollback no ambiente PROD\n";
+        echo "  simplephp validate                          - Valida se as migrations estão corretas\n";
+        echo "\n";
     }
 
     private function printHelp(?string $error = null): void
