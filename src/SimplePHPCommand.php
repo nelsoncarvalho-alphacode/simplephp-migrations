@@ -75,29 +75,32 @@ class SimplePHPCommand
 
         chdir($path);
 
-        // 1. Criar composer.json se não existir
+        // 1. Criar composer.json básico se não existir
         if (!file_exists($composerJson)) {
             echo "📝 Criando composer.json...\n";
-            shell_exec("composer init -n --name=project/simplephp --require=php:>=7.4 --type=project");
+            shell_exec("composer init -n --name='project/simplephp' --type=project");
 
-            // Adiciona autoload manualmente (evita criar pasta psr-4/)
+            // Inserir require e autoload manualmente (evita erros de terminal)
             $composerData = json_decode(file_get_contents($composerJson), true);
+            $composerData['require']['php'] = ">=7.4";
             $composerData['autoload'] = [
                 'psr-4' => [
                     'Alphacode\\Migrations\\' => 'vendor/alphacode/simplephp-migrations/src/'
                 ]
             ];
             file_put_contents($composerJson, json_encode($composerData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            // Gerar autoload
             shell_exec("composer dump-autoload");
         }
 
-        // 2. Rodar install se não houver autoload
+        // 2. Rodar composer install se vendor/autoload não existir
         if (!file_exists($vendorAutoload)) {
             echo "📥 Instalando dependências...\n";
             shell_exec("composer install");
         }
 
-        // 3. Adicionar o pacote se ainda não estiver no require
+        // 3. Verifica e adiciona o pacote alphacode/simplephp-migrations se necessário
         $composer = json_decode(file_get_contents($composerJson), true);
         $requires = $composer['require'] ?? [];
 
