@@ -116,6 +116,16 @@ class SimplePHPCommand
             echo "📁 Pasta migrations criada.\n";
         }
 
+        // cria pasta cli se necessário
+        $cliDir = "$path/cli";
+        if (!is_dir($cliDir)) {
+            mkdir($cliDir);
+        }
+
+        // copia scripts
+        copy(__DIR__ . '/../resources/cli/migrate.php', "$cliDir/migrate.php");
+        copy(__DIR__ . '/../resources/cli/rollback.php', "$cliDir/rollback.php");
+
         // 5. Copiar migration inicial
         $stub = __DIR__ . '/../migrations/_0000_00_00_000000_init_project_structure.php';
         $target = "$migrationDir/_0000_00_00_000000_init_project_structure.php";
