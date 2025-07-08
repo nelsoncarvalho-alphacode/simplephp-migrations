@@ -1,6 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+$projectRoot = realpath(__DIR__ . '/..');
+require_once $projectRoot . '/vendor/autoload.php';
 
 $env = getenv('CLI_ENV') ?: 'dev';
 $_SERVER['HTTP_HOST'] = $env;
