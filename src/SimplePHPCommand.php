@@ -75,19 +75,29 @@ class SimplePHPCommand
 
         chdir($path);
 
-        // 1. Se não existe composer.json, cria
+        // 1. Criar composer.json se não existir
         if (!file_exists($composerJson)) {
             echo "📝 Criando composer.json...\n";
-            shell_exec("composer init -n --name=project/simplephp --require=php:^7.4 --autoload psr-4 --type=project");
+            shell_exec("composer init -n --name=project/simplephp --require=php:>=7.4 --type=project");
+
+            // Adiciona autoload manualmente (evita criar pasta psr-4/)
+            $composerData = json_decode(file_get_contents($composerJson), true);
+            $composerData['autoload'] = [
+                'psr-4' => [
+                    'Alphacode\\Migrations\\' => 'vendor/alphacode/simplephp-migrations/src/'
+                ]
+            ];
+            file_put_contents($composerJson, json_encode($composerData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            shell_exec("composer dump-autoload");
         }
 
-        // 2. Se não existe vendor/autoload.php, roda install
+        // 2. Rodar install se não houver autoload
         if (!file_exists($vendorAutoload)) {
             echo "📥 Instalando dependências...\n";
             shell_exec("composer install");
         }
 
-        // 3. Se ainda não tem o pacote, adiciona
+        // 3. Adicionar o pacote se ainda não estiver no require
         $composer = json_decode(file_get_contents($composerJson), true);
         $requires = $composer['require'] ?? [];
 
@@ -96,14 +106,14 @@ class SimplePHPCommand
             shell_exec("composer require alphacode/simplephp-migrations");
         }
 
-        // Criação de migrations/
+        // 4. Criar pasta migrations
         $migrationDir = "$path/migrations";
         if (!is_dir($migrationDir)) {
             mkdir($migrationDir, 0777, true);
             echo "📁 Pasta migrations criada.\n";
         }
 
-        // Copiar migration inicial
+        // 5. Copiar migration inicial
         $stub = __DIR__ . '/../migrations/_0000_00_00_000000_init_project_structure.php';
         $target = "$migrationDir/_0000_00_00_000000_init_project_structure.php";
         if (!file_exists($target)) {
